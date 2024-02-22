@@ -51,18 +51,6 @@ six==1.16.0
 stack-data==0.6.3
 sympy==1.12
 tenacity==8.2.3
-
-# for CUDA 11.8 torch on Linux
---index-url https://download.pytorch.org/whl/cu118; sys_platform == "windows"
-torch==2.2.0+cu118; sys_platform == "windows"
-torchaudio==2.2.0+cu118; sys_platform == "windows"
-torchvision==0.17.0+cu118; sys_platform == "windows"
-
-# for MPS accelerated torch on Mac
-torch==2.2.0; sys_platform == "darwin"
-torchaudio==2.2.0; sys_platform == "darwin"
-torchvision==0.17.0; sys_platform == "darwin"
-
 tornado==6.4
 traitlets==5.14.1
 typing_extensions==4.8.0
@@ -70,3 +58,14 @@ tzdata==2024.1
 urllib3==1.26.13
 wcwidth==0.2.13
 xyzservices==2023.10.1
+
+# for CUDA 11.8 torch on Linux
+torch; sys_platform == "win32" --index-url https://download.pytorch.org/whl/cu118
+torchaudio; sys_platform == "win32" --index-url https://download.pytorch.org/whl/cu118
+torchvision; sys_platform == "win32" --index-url https://download.pytorch.org/whl/cu118
+
+# for MPS accelerated torch on Mac
+torch==2.2.0; sys_platform == "darwin"
+torchaudio==2.2.0; sys_platform == "darwin"
+torchvision==0.17.0; sys_platform == "darwin"
+
