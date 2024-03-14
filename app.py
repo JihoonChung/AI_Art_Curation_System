@@ -69,19 +69,41 @@ def predict_genre(image):
 
     return class_probabilities, class_probabilities, caption
 
+# Flagging (Feedback)
+callback = gr.CSVLogger()
 
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("Upload an image and select ROI")
-    with gr.Row():
+# Add feedback for style and genre and allow user to correct (dropdown)
+# Add rating for the captions between 1-10
+# Export all to .csv
+
+with gr.Blocks(theme=gr.themes.Soft(), title="AI Art Curation System") as demo:
+    gr.Markdown("""
+                # AI Art Curation System
+
+                Upload an image (and select ROI to begin)
+                """)
+    with gr.Tab("Model"): # Main tab
+        with gr.Row():
+            with gr.Column():
+                input_image = gr.ImageEditor(type='pil', image_mode='RGB', transforms='crop', eraser=False, brush=False,scale=2)
+                btn = gr.Button("Generate")
+            with gr.Column():
+                output_style = gr.Label(label="Predicted Style",num_top_classes=3,scale=0)
+                output_genre = gr.Label(label="Predicted Genre",num_top_classes=3,scale=0)
+            with gr.Column():
+                output_caption = gr.Text(label="Generated Caption",scale=0)
+        btn.click(predict_genre, inputs=input_image, outputs=[output_style, output_genre, output_caption])
+    # This needs to be called at some point prior to the first call to callback.flag()
+    with gr.Tab("Feedback"): # Feedback tab
         with gr.Column():
-            input_image = gr.ImageEditor(type='pil', image_mode='RGB', transforms='crop', eraser=False, brush=False,scale=2)
-            btn = gr.Button("Generate")
-        with gr.Column():
-            output_style = gr.Label(label="Predicted Style",num_top_classes=3,scale=0)
-            output_genre = gr.Label(label="Predicted Genre",num_top_classes=3,scale=0)
-        with gr.Column():
-            output_caption = gr.Text(label="Generated Caption",scale=0)
-    btn.click(predict_genre, inputs=input_image, outputs=[output_style, output_genre, output_caption])
+            with gr.Row():
+                style_rating = gr.Dropdown(["test1", "test2", "test3"], label="Corrected Style")
+                genre_rating = gr.Dropdown(["test1", "test2", "test3"], label="Corrected Genre")
+            caption_rating = gr.Slider(1, 10, step = 1, value=5, label="Caption Rating", info="Rate the Generated Caption Between 1 to 10 (Best)")
+            btn_feedback = gr.Button("Flag Feedback")
+    callback.setup([input_image, style_rating, genre_rating, caption_rating], "flagged_data_points")        
+    btn_feedback.click(lambda *args: callback.flag(args), [input_image, style_rating, genre_rating, caption_rating], None, preprocess=False)
+
     
 
 if __name__ == "__main__":
