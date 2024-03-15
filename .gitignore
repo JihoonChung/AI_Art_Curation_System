@@ -6,5 +6,6 @@
 wikiart_subset/neoclassicism/.DS_Store
 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/hub/models--google--gemma-7b/.no_exist/359f554e6b7dcfe8026a8705a20ff166141a5adf/model.safetensors
 /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
-/outputs
-/SemArt
+/outputs/SimplifiedUNet_test
+/outputs/UNet_simp_test
+/outputs/unet_test
