@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
+from transformers import BlipProcessor, BlipForConditionalGeneration
 
 # Define a random model for testing purposes
 class RandomModel(nn.Module):
@@ -50,7 +51,18 @@ def preprocess_image(image):
 
     return input_tensor
 
-def predict_genre(image):
+def captioner(image, style):
+    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+    model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+    # conditional image captioning
+    text = f"{style} artwork of "
+    image = transforms.ToPILImage()(image.squeeze())
+    inputs = processor(image, text, return_tensors="pt")
+    out = model.generate(**inputs)
+    caption = processor.decode(out[0], skip_special_tokens=True)
+    return caption
+
+def predict(image):
     # Preprocess the image
     input_tensor = preprocess_image(image['layers'][0])
 
@@ -65,23 +77,46 @@ def predict_genre(image):
         #_, predicted = torch.max(outputs, 1)
          # Create a dictionary to store class probabilities
         class_probabilities = {classes[i]: probabilities[0][i].item() for i in range(len(classes))}
-        caption = 'test caption'
+        most_likely_style = max(class_probabilities, key=class_probabilities.get)
+        caption = captioner(input_tensor, most_likely_style)
 
     return class_probabilities, class_probabilities, caption
 
+# Flagging (Feedback)
+callback = gr.CSVLogger()
 
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("Upload an image and select ROI")
-    with gr.Row():
+# Add feedback for style and genre and allow user to correct (dropdown)
+# Add rating for the captions between 1-10
+# Export all to .csv
+
+with gr.Blocks(theme=gr.themes.Soft(), title="AI Art Curation System") as demo:
+    gr.Markdown("""
+                # AI Art Curation System
+
+                Upload an image (and select ROI to begin)
+                """)
+    with gr.Tab("Model"): # Main tab
+        with gr.Row():
+            with gr.Column():
+                input_image = gr.ImageEditor(type='pil', image_mode='RGB', transforms='crop', eraser=False, brush=False,scale=2)
+                btn = gr.Button("Generate")
+            with gr.Column():
+                output_style = gr.Label(label="Predicted Style",num_top_classes=3,scale=0)
+                output_genre = gr.Label(label="Predicted Genre",num_top_classes=3,scale=0)
+            with gr.Column():
+                output_caption = gr.Text(label="Generated Caption",scale=0)
+        btn.click(predict, inputs=input_image, outputs=[output_style, output_genre, output_caption])
+    # This needs to be called at some point prior to the first call to callback.flag()
+    with gr.Tab("Feedback"): # Feedback tab
         with gr.Column():
-            input_image = gr.ImageEditor(type='pil', image_mode='RGB', transforms='crop', eraser=False, brush=False,scale=2)
-            btn = gr.Button("Generate")
-        with gr.Column():
-            output_style = gr.Label(label="Predicted Style",num_top_classes=3,scale=0)
-            output_genre = gr.Label(label="Predicted Genre",num_top_classes=3,scale=0)
-        with gr.Column():
-            output_caption = gr.Text(label="Generated Caption",scale=0)
-    btn.click(predict_genre, inputs=input_image, outputs=[output_style, output_genre, output_caption])
+            with gr.Row():
+                style_rating = gr.Dropdown(["test1", "test2", "test3"], label="Corrected Style")
+                genre_rating = gr.Dropdown(["test1", "test2", "test3"], label="Corrected Genre")
+            caption_rating = gr.Slider(1, 10, step = 1, value=5, label="Caption Rating", info="Rate the Generated Caption Between 1 to 10 (Best)")
+            btn_feedback = gr.Button("Flag Feedback")
+    callback.setup([input_image, style_rating, genre_rating, caption_rating], "flagged_data_points")        
+    btn_feedback.click(lambda *args: callback.flag(args), [input_image, style_rating, genre_rating, caption_rating], None, preprocess=False)
+
     
 
 if __name__ == "__main__":
