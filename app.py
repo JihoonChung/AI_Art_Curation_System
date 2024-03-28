@@ -3,15 +3,12 @@ import gradio as gr
 from PIL import Image
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torchvision import transforms
 from transformers import BlipProcessor, BlipForConditionalGeneration
-import joblib
-import rec as rc
-
-# Autoencoder for similar images
-
-
+from joblib import load
+import rec as rc #rec.py autoencoder
+import pickle
+from style import * #style CNN
 
 # Define a random model for testing purposes
 class RandomModel(nn.Module):
@@ -26,17 +23,60 @@ class RandomModel(nn.Module):
         return x
 
 # Define a list of genre labels for testing purposes
-styles = ['Realism', 'Baroque', 'Post_Impressionism', 'Impressionism',
-       'Romanticism', 'Art_Nouveau', 'Northern_Renaissance', 'Symbolism',
-       'Naive_Art_Primitivism', 'Expressionism', 'Cubism', 'Fauvism',
-       'Analytical_Cubism', 'Abstract_Expressionism', 'Synthetic_Cubism',
-       'Pointillism', 'Early_Renaissance', 'Color_Field_Painting',
-       'New_Realism', 'Ukiyo_e', 'Rococo', 'High_Renaissance',
-       'Mannerism_Late_Renaissance', 'Pop_Art', 'Contemporary_Realism',
-       'Minimalism', 'Action_painting']
+""" styles = ['Abstract_Expressionism', 'Art_Nouveau_Modern', 'Baroque',
+                'Cubism', 'Expressionism', 'Impressionism', 'Naive_Art_Primitivism',
+                  'Northern_Renaissance', 'Post_Impressionism', 'Realism', 'Rococo', 
+                  'Romanticism', 'Symbolism']    #subset """
+styles = [
+    'Abstract Expressionism',
+    'Action painting',
+    'Analytical Cubism',
+    'Art Nouveau Modern',
+    'Baroque',
+    'Color Field Painting',
+    'Contemporary Realism',
+    'Cubism',
+    'Early Renaissance',
+    'Expressionism',
+    'Fauvism',
+    'High Renaissance',
+    'Impressionism',
+    'Mannerism Late Renaissance',
+    'Minimalism',
+    'Naive Art Primitivism',
+    'New Realism',
+    'Northern Renaissance',
+    'Pointillism',
+    'Pop Art',
+    'Post-Impressionism',
+    'Realism',
+    'Rococo',
+    'Romanticism',
+    'Symbolism',
+    'Synthetic Cubism',
+    'Ukiyo-e'
+]
+
 genres = ['landscape', 'religious_painting', 'portrait', 'genre_painting',
        'Unknown Genre', 'still_life', 'sketch_and_study', 'illustration',
        'cityscape', 'nude_painting', 'abstract_painting']
+value_to_category = {
+    0: 'Abstract_Expressionism',
+    3: 'Art_Nouveau_Modern',
+    4: 'Baroque',
+    7: 'Cubism',
+    9: 'Expressionism',
+    12: 'Impressionism',
+    15: 'Naive_Art_Primitivism',
+    17: 'Northern_Renaissance',
+    20: 'Post_Impressionism',
+    21: 'Realism',
+    22: 'Rococo',
+    23: 'Romanticism',
+    24: 'Symbolism'
+}
+class_numbers = list(value_to_category.keys())
+
 
 # Define the custom function to preprocess the image and get predictions
 def preprocess_image(image):
@@ -61,7 +101,7 @@ def preprocess_image(image):
     return input_tensor
 
 def get_model(path):
-    best_model = joblib.load('model\\resnet50_wo_l2_epoch3.joblib')
+    best_model = load(path)
     return best_model
 
 def captioner(image, style):
@@ -81,18 +121,21 @@ def predict(image):
     input_tensor = preprocess_image(image['composite'])
 
     # Initialize the random model
-    model_style = RandomModel(num_classes=len(styles))
+    model_style = get_model('./outputs/style.joblib')
+    #model_style = get_model(f'./outputs/ResNet_Style/submit/resnet50_wo_l2_epoch3.joblib')
+    #model_style = RandomModel(num_classes=len(styles))
     model_genre = RandomModel(num_classes=len(genres))
     # Get prediction from model
     with torch.no_grad():
         model_style.eval()
         model_genre.eval()
         outputs_style = model_style(input_tensor)
-        outputs_genre = model_style(input_tensor)
-        probabilities_style = F.softmax(outputs_style, dim=1)
-        probabilities_genre = F.softmax(outputs_genre, dim=1)
+        outputs_genre = model_genre(input_tensor)
+        probabilities_style = torch.softmax(outputs_style, dim=1)
+        probabilities_genre = torch.softmax(outputs_genre, dim=1)
         #_, predicted = torch.max(outputs, 1)
          # Create a dictionary to store class probabilities
+        #style_probabilities = {value_to_category[i]: probabilities_style[0][i].item() for i in class_numbers}
         style_probabilities = {styles[i]: probabilities_style[0][i].item() for i in range(len(styles))}
         genre_probabilities = {genres[i]: probabilities_genre[0][i].item() for i in range(len(genres))}
         #most_likely_style = max(style_probabilities, key=style_probabilities.get)
@@ -124,7 +167,6 @@ with gr.Blocks(theme=gr.themes.Soft(), title="AI Art Curation System") as demo:
             with gr.Column():
                 input_image = gr.ImageEditor(type='pil', image_mode='RGB', transforms='crop', eraser=False, brush=False,scale=2, label="Input")
                 btn = gr.Button("Generate")
-                reset_btn = gr.Button("Reset")
             with gr.Column():
                 output_style = gr.Label(label="Predicted Style",num_top_classes=3,scale=0)
                 output_genre = gr.Label(label="Predicted Genre",num_top_classes=3,scale=0)
@@ -133,7 +175,6 @@ with gr.Blocks(theme=gr.themes.Soft(), title="AI Art Curation System") as demo:
                 output_image = gr.Image(label="Recommended Artwork",scale=0, type="pil", interactive=False,height=512, width=512)
                 #output_caption = gr.Text(label="Generated Caption",scale=0,show_copy_button=True)
         btn.click(predict, inputs=input_image, outputs=[output_style, output_genre, output_image, output_text])
-        reset_btn.click(inputs=[])
    
     with gr.Tab("Feedback"): # Feedback tab
         with gr.Column():
