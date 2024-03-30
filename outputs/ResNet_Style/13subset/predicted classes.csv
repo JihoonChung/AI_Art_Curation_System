@@ -1,0 +1,14 @@
+predicted class,Abstract_Expressionism,Art_Nouveau_Modern,Baroque,Cubism,Expressionism,Impressionism,Naive_Art_Primitivism,Northern_Renaissance,Post_Impressionism,Realism,Rococo,Romanticism,Symbolism
+Abstract_Expressionism,192,7,2,18,30,4,12,1,6,2,0,1,15
+Art_Nouveau_Modern,4,234,1,1,32,4,6,6,8,24,2,10,42
+Baroque,0,2,292,0,6,0,1,29,1,38,36,35,14
+Cubism,7,1,1,123,20,0,6,0,3,1,0,0,2
+Expressionism,41,30,1,61,292,18,31,7,72,22,0,7,28
+Impressionism,10,19,1,2,53,921,2,2,113,117,2,37,47
+Naive_Art_Primitivism,2,12,0,11,10,3,100,0,7,1,0,0,5
+Northern_Renaissance,0,7,11,0,3,1,0,163,0,5,1,12,2
+Post_Impressionism,15,44,2,25,123,162,37,2,324,46,1,6,26
+Realism,3,45,36,1,57,194,16,21,58,699,8,131,65
+Rococo,0,3,35,0,0,1,0,2,0,9,128,27,4
+Romanticism,0,13,33,0,9,27,5,13,7,91,25,409,51
+Symbolism,7,26,0,3,20,8,5,3,8,18,1,17,184
