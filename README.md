@@ -1,1 +1,1 @@
-[![IMAGE ALT TEXT HERE](https://www.youtube.com/watch?v=Rm1cvM4DUkg&ab_channel=jc/0.jpg)](https://www.youtube.com/watch?v=Rm1cvM4DUkg&ab_channel=jc)
+[![AI Art Curation System](http://img.youtube.com/vi/Rm1cvM4DUkg/0.jpg)](https://youtu.be/Rm1cvM4DUkg)
