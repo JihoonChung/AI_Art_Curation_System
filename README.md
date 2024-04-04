@@ -14,6 +14,8 @@ Welcome to our **AI Art Curation System**, a revolutionary tool designed to enha
 
 Join Jihoon and Anson as they embark on a journey through the Royal Ontario Museum (ROM), utilizing our AI Art Curation System to discover and learn about various artworks. Watch the video below to see our system in action and witness firsthand the enhanced gallery experience it provides.
 
+:point_down: **Click the image below to watch the demo** :point_down:
+
 [![AI Art Curation System Demo at the ROM](http://img.youtube.com/vi/Rm1cvM4DUkg/0.jpg)](https://youtu.be/Rm1cvM4DUkg)
 
 ## Motivation
