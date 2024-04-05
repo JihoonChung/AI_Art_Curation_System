@@ -43,8 +43,8 @@ with gr.Blocks(theme=gr.themes.Soft(), title="AI Art Curation System") as demo:
     with gr.Tab("Feedback"): # Feedback tab
         with gr.Column():
             with gr.Row():
-                styles = read_labels('styles.txt')
-                genres = read_labels('genres.txt')
+                styles = read_labels('./labels/styles.txt')
+                genres = read_labels('./labels/genres.txt')
                 style_rating = gr.Dropdown(styles+['None'], label="Corrected Style")
                 genre_rating = gr.Dropdown(genres+['None'], label="Corrected Genre")
             image_rating = gr.Slider(1, 10, step = 1, value=5, label="Recommendation Rating", info="Rate the Recommended Artwork Between 1 to 10 (Best)")

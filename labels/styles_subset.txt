@@ -1,0 +1,13 @@
+Abstract_Expressionism
+Art_Nouveau_Modern
+Baroque
+Cubism
+Expressionism
+Impressionism
+Naive_Art_Primitivism
+Northern_Renaissance
+Post_Impressionism
+Realism
+Rococo
+Romanticism
+Symbolism

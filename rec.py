@@ -119,7 +119,7 @@ def get_similar_image(input_image, pickle_file_path, kmeans_model_path, unet_mod
         if top_filename in files:
             image_path = os.path.join(root, top_filename)
             img = Image.open(image_path)
-    return img, top_info['TITLE']
+    return img, top_info['TITLE'], top_info['DESCRIPTION']
 
 """ output = get_similar_image(input_image = input_tensor, 
                            pickle_file_path='./outputs/encoded_features_desc_wCluster.pkl', 

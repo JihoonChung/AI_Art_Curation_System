@@ -144,11 +144,11 @@ def predict(image, app = True):
     # Style and Genre CNN
     #############################################################
     # Get labels
-    styles = read_labels('styles.txt')
-    genres = read_labels('genres.txt')
+    styles = read_labels('./labels/styles.txt')
+    genres = read_labels('./labels/genres.txt')
     # Get models
-    model_style = get_model('./outputs/model_50_2_batch_128_p2_epoch9.joblib')
-    model_genre = get_genre_model('./outputs/Genre_classifier_model.001_epoch8')
+    model_style = get_model('./models/model_50_2_batch_128_p2_epoch9.joblib')
+    model_genre = get_genre_model('./models/Genre_classifier_model.001_epoch8')
     # Use GPU so it runs faster for demo, change to CPU for huggingface
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_style = model_style.to(device)
@@ -171,10 +171,10 @@ def predict(image, app = True):
     # Recommendation
     #############################################################
     sim_img, title, description = rc.get_similar_image(input_image = input_tensor, 
-                           pickle_file_path='./outputs/encoded_features_desc_w_Cluster_unique.pkl', 
-                           kmeans_model_path='./outputs/kmeans_model.joblib', 
-                           unet_model_path='./outputs/UNet_SEMART/model_epoch_2.pth',
-                           search_directory="E:\\SemArt\\Images") # Change to wherever the SemART dataset is saved
+                           pickle_file_path='./models/encoded_features_desc_w_Cluster_unique.pkl', 
+                           kmeans_model_path='./models/kmeans_model.joblib', 
+                           unet_model_path='./models/UNet_SEMART/model_epoch_2.pth',
+                           search_directory="./SemArt/Images") # Change to wherever the SemART dataset is saved
     
     #caption = captioner(input_tensor, most_likely_style) #BLIP Captions
 
