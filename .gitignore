@@ -9,3 +9,9 @@ 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/hub/models--google--gemma-7b/.no_exist/359
 /outputs/SimplifiedUNet_test
 /outputs/UNet_simp_test
 /outputs/unet_test
+/archive
+/batch
+/models/Genre_classifier_model.001_epoch8
+/models/encoded_features_desc_w_Cluster_unique.pkl
+/outputs
+/style
