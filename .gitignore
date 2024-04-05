@@ -1,0 +1,17 @@
+
+*.jpg
+*.png
+*.jpeg
+*.pyc
+wikiart_subset/neoclassicism/.DS_Store
+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/hub/models--google--gemma-7b/.no_exist/359f554e6b7dcfe8026a8705a20ff166141a5adf/model.safetensors
+/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
+/outputs/SimplifiedUNet_test
+/outputs/UNet_simp_test
+/outputs/unet_test
+/archive
+/batch
+/models/Genre_classifier_model.001_epoch8
+/models/encoded_features_desc_w_Cluster_unique.pkl
+/outputs
+/style

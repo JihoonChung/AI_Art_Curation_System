@@ -1,0 +1,11 @@
+Unknown
+abstract_painting
+cityscape
+genre_painting
+illustration
+landscape
+nude_painting
+portrait
+religious_painting
+sketch_and_study
+still_life
