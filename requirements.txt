@@ -82,7 +82,7 @@ packaging==23.2
 pandas==2.2.0
 pandocfilters==1.5.1
 parso==0.8.3
-pillow==10.2.0
+pillow==13.0.0
 platformdirs==4.2.0
 plotly==5.19.0
 prometheus_client==0.20.0
